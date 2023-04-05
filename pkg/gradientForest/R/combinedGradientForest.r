@@ -63,8 +63,10 @@ function(..., nbin=101, method=2, standardize=c("before","after")[1])
     ## use the predictor range, so the simplest solution
     ## is to add the predictor back in.
     missed_preds <- setdiff(allpreds, levels(X_r$predictor))
-    rescued_preds <- do.call("rbind", lapply(gearnames, function(gearname) {gf.x.long.form.missed(gearname, gf = fList[[gearname]], preds = missed_preds)}))
-    X_r <- rbind(X_r, rescued_preds)
+    if(length(missed_preds) > 0) {
+        rescued_preds <- do.call("rbind", lapply(gearnames, function(gearname) {gf.x.long.form.missed(gearname, gf = fList[[gearname]], preds = missed_preds)}))
+        X_r <- rbind(X_r, rescued_preds)
+    }    
     nspec <- sapply(fList,"[[","species.pos.rsq")
     X_r$nspec <- nspec[X_r$gf.name]
     X_r <- na.omit(X_r)
