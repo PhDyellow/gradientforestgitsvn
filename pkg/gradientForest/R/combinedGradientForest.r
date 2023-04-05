@@ -50,12 +50,35 @@ function(..., nbin=101, method=2, standardize=c("before","after")[1])
       names(out) <- c("gf.name","value","predictor")
       return(out)
     }
+    gf.x.long.form.missed <- function(gearname, gf, preds) {
+      out <- data.frame(gf.name = gearname, stack(gf$X[preds]))
+      names(out) <- c("gf.name","value","predictor")
+      return(out)
+    }
 
     X_r <- do.call("rbind", lapply(gearnames, function(gearname) {gf.x.long.form(gearname, gf = fList[[gearname]])}))
+    ## preds that are not used by any GF model will
+    ## have a cumimp of 0.
+    ## however, a number of processing steps expect to
+    ## use the predictor range, so the simplest solution
+    ## is to add the predictor back in.
+    missed_preds <- setdiff(allpreds, levels(X_r$predictor))
+    rescued_preds <- do.call("rbind", lapply(gearnames, function(gearname) {gf.x.long.form.missed(gearname, gf = fList[[gearname]], preds = missed_preds)}))
+    X_r <- rbind(X_r, rescued_preds)
     nspec <- sapply(fList,"[[","species.pos.rsq")
     X_r$nspec <- nspec[X_r$gf.name]
     X_r <- na.omit(X_r)
 
+    ##The purpose of bins is to make sure the range of
+    ##each predictor covers the range of samples that
+    ##were meaningful. If a model was fitted with high
+    ## values of a predictor, but didn't use the predictor,
+    ## then we want to focus on the narrower range of
+    ## values that other models did use.
+    ## If NO model uses a predictor, then the range we
+    ## use is not as important, all models will assign
+    ## a cumulative importance of 0.
+    
     bins <- tapply(1:nrow(X_r), X_r$predictor, function(sub){
       bin(X_r$value[sub], nbin=nbin)
     })
