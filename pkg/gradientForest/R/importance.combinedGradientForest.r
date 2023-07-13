@@ -4,7 +4,7 @@ function (x, type=c("Weighted","Raw","Species")[1], sort=TRUE, ...)
     if (!inherits(x,"combinedGradientForest"))
       stop(paste("'x' must be a combinedGradientForest object"))
 
-    imp <- x$imp.rsq[,names(x$imp.rsq) != "predictor"]
+    imp <- x$imp.rsq[,names(x$imp.rsq) != "predictor", drop = FALSE]
     weighted <- rowSums(imp, na.rm=TRUE)/ncol(imp)
     if (sort)
       o <- order(-weighted)
