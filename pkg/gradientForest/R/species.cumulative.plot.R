@@ -10,7 +10,7 @@ function(obj,imp.vars=NULL, imp.vars.names=imp.vars,
    
     par(mfrow=mfrow)
     cols <- rainbow(length(names(obj$result)))
-    names(cols) <- names(obj$result))
+    names(cols) <- names(obj$result)
  	  
     xaxt <- if(show.overall) "n" else "s"
     if (show.species) {
