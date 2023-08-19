@@ -40,7 +40,7 @@ mylevels <- function(x) if (is.factor(x)) levels(x) else 0
 
     ## Make sure mtry is in reasonable range.
     if (mtry < 1 || mtry > p)
-        warning("invalid mtry: reset to within valid range")
+        stop("invalid mtry: reset to within valid range")
     mtry <- max(1, min(p, round(mtry)))
     if (!is.null(y)) {
         if (length(y) != n) stop("length of response must be the same as predictors")
