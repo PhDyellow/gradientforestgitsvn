@@ -93,7 +93,7 @@ function(data,predictor.vars,response.vars,ntree=10,mtry=NULL, transform=NULL,ma
   }
 
   if (!length(result)) {
-    warning("No species models provided a positive R^2. \nThe gradient forest is empty")
+    stop("No species models provided a positive R^2. \nThe gradient forest is empty")
     return(NULL)
   }
   
